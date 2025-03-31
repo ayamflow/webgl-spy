@@ -1,0 +1,23 @@
+{
+  "name": "webgl-spy",
+  "version": "0.0.1",
+  "description": "A tool capturing the webgl instructions to monitor the number of drawcalls & other performance-related commands.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ayamflow/webgl-spy.git"
+  },
+  "keywords": [
+    "webgl",
+    "performance",
+    "monitor",
+    "draw",
+    "drawcall"
+  ],
+  "author": "Florian Morel",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/ayamflow/webgl-spy/issues"
+  },
+  "homepage": "https://github.com/ayamflow/webgl-spy#readme"
+}
