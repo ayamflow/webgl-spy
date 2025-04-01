@@ -23,10 +23,11 @@ function render() {
 }
 ```
 
-`calls` is an array of `{ draw, program? }` listing at minima the draw method name and the shader name, if available.
+`calls` is an array of `{ action, program?, type }` listing at minima the draw method name and the shader name, if available.
 Other info can be
 - clear bits (depth, stencil, color)
 - draw indices count / vertices count
+- framebufferIndice (attributed by this lib, for clarity)
 ```js
 {action: 'bindFramebuffer ID - 0', type: 'bind'}
 {action: 'clear: DEPTH, STENCIL, COLOR', type: 'clear'}
