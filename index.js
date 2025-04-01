@@ -82,10 +82,9 @@ export default class WebglSpy {
         if (reset) this.calls.length = 0
     }
 
-    endCapture(onlyDraws = false) {
+    endCapture() {
         let result = this.calls.slice()
         this.calls.length = 0
-        if (onlyDraws) result = result.filter(command => command.draw.indexOf('draw') > -1)
         return result
     }
 
@@ -97,16 +96,16 @@ export default class WebglSpy {
 
 function getDetails(gl, methodName, args) {
     // Get drawcall details
-    let draw = methodName
+    let action = methodName
     const type = getType(methodName)
 
     if (methodName.toLowerCase().indexOf('draw') > -1) {
         const mode = DRAW_MODES.filter(mode => args[0] === gl[mode])
-        draw = `${draw}: ${mode}, ${args[1]} indices`
+        action = `${action}: ${mode}, ${args[1]} indices`
 
         if (methodName.toLowerCase().indexOf('array') > -1) {
             const count = args[2]
-            draw = `${draw}, ${count} vertices`
+            action = `${action}, ${count} vertices`
 
         }
     }
@@ -115,7 +114,7 @@ function getDetails(gl, methodName, args) {
         if (args[1]) {
             const buffer = args[1]
             const id = bufferMap.get(buffer)
-            draw = `${draw} ID - ${id}`
+            action = `${action} ID - ${id}`
         }
     }
 
@@ -126,7 +125,7 @@ function getDetails(gl, methodName, args) {
         const color = COLOR_BUFFER_BIT & args[0]
 
         const bits = ['DEPTH', 'STENCIL', 'COLOR'].filter((value, i) => [depth, stencil, color][i])
-        draw = `${draw}: ${bits.join(', ')}`
+        action = `${action}: ${bits.join(', ')}`
     }
 
     // Get program name
@@ -141,7 +140,7 @@ function getDetails(gl, methodName, args) {
         }
     }
     
-    return programName ? { draw, program: programName, type } : { draw, type }
+    return programName ? { action, program: programName, type } : { action, type }
 }
 
 function getType(methodName) {

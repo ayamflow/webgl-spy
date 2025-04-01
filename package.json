@@ -1,6 +1,6 @@
 {
   "name": "webgl-spy",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A tool capturing the webgl instructions to monitor the number of drawcalls & other performance-related commands.",
   "main": "index.js",
   "repository": {

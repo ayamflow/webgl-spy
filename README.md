@@ -28,12 +28,12 @@ Other info can be
 - clear bits (depth, stencil, color)
 - draw indices count / vertices count
 ```js
-{draw: 'bindFramebuffer ID - 0', type: 'bind'}
-{draw: 'clear: DEPTH, STENCIL, COLOR', type: 'clear'}
-{draw: 'drawElements: TRIANGLES, 60192 indices', program: 'TreeMaterial', type: 'draw'}
-{draw: 'bindFramebuffer', type: 'bind'}
-{draw: 'drawArrays: TRIANGLES, 0 indices, 3 vertices', program: 'Unnamed shader', type: 'draw'}
-{draw: 'clear: DEPTH', type: 'clear'}
+{action: 'bindFramebuffer ID - 0', type: 'bind'}
+{action: 'clear: DEPTH, STENCIL, COLOR', type: 'clear'}
+{action: 'drawElements: TRIANGLES, 60192 indices', program: 'TreeMaterial', type: 'draw'}
+{action: 'bindFramebuffer', type: 'bind'}
+{action: 'drawArrays: TRIANGLES, 0 indices, 3 vertices', program: 'Unnamed shader', type: 'draw'}
+{action: 'clear: DEPTH', type: 'clear'}
 ```
 
 ### API
@@ -43,7 +43,7 @@ Creates a new instance to monitor the given WebGL2RenderingContext.
 #### startCapture()
 Call before any drawing operation (setRenderTarget, clear, etc).
 
-#### endCapture( onlyDraws = false )
+#### endCapture()
 Call after everything has been rendered. Returns an array of calls. Can be filtered by `type` (draw, clear, bind).
 
 #### destroy()
