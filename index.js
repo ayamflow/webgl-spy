@@ -1,5 +1,11 @@
 const SPY_OG_PREFIX = 'WEBGL_SPY_'
 
+const TYPES = {
+    DRAW: 'draw',
+    CLEAR: 'clear',
+    BIND: 'bind',
+}
+
 // Taken from 
 // https://github.com/mrdoob/three.js WebGLIndexedBufferRenderer.js
 // and WebGLBufferRenderer.js
@@ -27,6 +33,9 @@ const COLOR_BUFFER_BIT = 16384
 const DRAW_MODES = ['POINTS', 'LINES', 'LINE_LOOP', 'LINE_STRIP', 'TRIANGLES', 'TRIANGLE_FAN']
 const CURRENT_PROGRAM = 35725
 
+let bufferId = 0
+const bufferMap = new WeakMap()
+
 export default class WebglSpy {
     constructor(gl) {
         this.gl = gl
@@ -36,15 +45,17 @@ export default class WebglSpy {
 
     spyContext(methods) {
         const gl = this.gl
-        methods.forEach(methodName => {
-            const ogMethod = gl[methodName]
-            gl[SPY_OG_PREFIX + methodName] = ogMethod
-            gl[methodName] = (...args) => {
-                ogMethod.apply(gl, args)
-                const details = getDetails(gl, methodName, args)
-                this.calls.push(details)
-            }
-        })
+
+        const spyCalls = (gl, methodName, res, args) => {
+            const details = getDetails(gl, methodName, args)
+            this.calls.push(details)
+        }
+        const spyBuffer = (gl, methodName, buffer) => {
+            bufferMap.set(buffer, bufferId++)
+        }
+        
+        methods.forEach(methodName => spyMethod(gl, methodName, spyCalls))
+        spyMethod(gl, 'createFramebuffer', spyBuffer)
     }
 
     unspyContext() {
@@ -87,6 +98,7 @@ export default class WebglSpy {
 function getDetails(gl, methodName, args) {
     // Get drawcall details
     let draw = methodName
+    const type = getType(methodName)
 
     if (methodName.toLowerCase().indexOf('draw') > -1) {
         const mode = DRAW_MODES.filter(mode => args[0] === gl[mode])
@@ -96,6 +108,14 @@ function getDetails(gl, methodName, args) {
             const count = args[2]
             draw = `${draw}, ${count} vertices`
 
+        }
+    }
+
+    if (methodName === 'bindFramebuffer') {
+        if (args[1]) {
+            const buffer = args[1]
+            const id = bufferMap.get(buffer)
+            draw = `${draw} ID - ${id}`
         }
     }
 
@@ -121,7 +141,24 @@ function getDetails(gl, methodName, args) {
         }
     }
     
-    return programName ? { draw, program: programName } : { draw }
+    return programName ? { draw, program: programName, type } : { draw, type }
+}
+
+function getType(methodName) {
+    const method = methodName.toLowerCase()
+    if (method.indexOf('draw') > -1) return TYPES.DRAW
+    if (method.indexOf('bind') > -1) return TYPES.BIND
+    if (methodName === 'clear') return TYPES.CLEAR
+}
+
+function spyMethod(gl, methodName, spy) {
+    const ogMethod = gl[methodName]
+    gl[SPY_OG_PREFIX + methodName] = ogMethod
+    gl[methodName] = (...args) => {
+        const res = ogMethod.apply(gl, args)
+        spy(gl, methodName, res, args)
+        return res
+    }
 }
 
 // Taken from

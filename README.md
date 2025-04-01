@@ -27,6 +27,14 @@ function render() {
 Other info can be
 - clear bits (depth, stencil, color)
 - draw indices count / vertices count
+```js
+{draw: 'bindFramebuffer ID - 0', type: 'bind'}
+{draw: 'clear: DEPTH, STENCIL, COLOR', type: 'clear'}
+{draw: 'drawElements: TRIANGLES, 60192 indices', program: 'TreeMaterial', type: 'draw'}
+{draw: 'bindFramebuffer', type: 'bind'}
+{draw: 'drawArrays: TRIANGLES, 0 indices, 3 vertices', program: 'Unnamed shader', type: 'draw'}
+{draw: 'clear: DEPTH', type: 'clear'}
+```
 
 ### API
 #### new WebglSpy(context)
@@ -36,7 +44,7 @@ Creates a new instance to monitor the given WebGL2RenderingContext.
 Call before any drawing operation (setRenderTarget, clear, etc).
 
 #### endCapture( onlyDraws = false )
-Call after everything has been rendered. Returns the list of calls.
+Call after everything has been rendered. Returns an array of calls. Can be filtered by `type` (draw, clear, bind).
 
 #### destroy()
 Restore the context by removing spies. Probably not needed.
@@ -44,8 +52,9 @@ Restore the context by removing spies. Probably not needed.
 ## To do
 This is a simple proof of concept and might not get developed further.
 If it happens, some ideas:
-- show framebuffer read/write/id
+- show framebuffer read/write
 - add state calls (i.e. enable/disable scissor, stencil, cull_face, depth_test, viewport, clearColor, blitFrameBuffer...)
+- add/show number of texture bounds?
 - Typescript for encapsulation & types
 - Unit tests
 
